@@ -9,6 +9,7 @@ from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 from keras import backend as K
 
 from data import load_train_data, load_test_data
+import gc
 
 img_rows = 64
 img_cols = 80
@@ -98,19 +99,19 @@ def train_and_predict():
 
     imgs_mask_train = imgs_mask_train.astype('float32')
     imgs_mask_train /= 255.  # scale masks to [0, 1]
-
+    gc.collect()
     print('-'*30)
     print('Creating and compiling model...')
     print('-'*30)
     model = get_unet()
     model_checkpoint = ModelCheckpoint('unet.hdf5', monitor='loss', save_best_only=True)
-
+    gc.collect()
     print('-'*30)
     print('Fitting model...')
     print('-'*30)
     model.fit(imgs_train, imgs_mask_train, batch_size=32, nb_epoch=20, verbose=1, shuffle=True,
               callbacks=[model_checkpoint])
-
+    gc.collect()
     print('-'*30)
     print('Loading and preprocessing test data...')
     print('-'*30)
